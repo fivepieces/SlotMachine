@@ -1,6 +1,7 @@
 import { Sprite, Assets, Container, Text, TextStyle } from 'pixi.js';
 import { fitTextToWidth } from './utils.js';
 import { reelBands } from './reels.js';
+import { getIdGrid, checkWins } from './wins.js';
 
 const BASE_WIDTH = 1280;
 const SYMBOL_WIDTH = 120;
@@ -93,9 +94,10 @@ function spinReels() {
 function layout() {
   const topMargin = 10;
   const winTextLineHeight = 35;
-  const maxWinLines = 4;
-  const winTextPadding = 10;
+  const maxWinLines = 4; // reserve space for up to 4 lines of win messages
+  const winTextPadding = 10; // make sure the win text dosent clip off screen
 
+  // calculate total content dimensions
   const reelsHeight = SYMBOL_HEIGHT * 3 + SPACING_Y * 2;
   const spinButtonHeight = spinButton.height;
   const winTextHeight = winTextLineHeight * maxWinLines + winTextPadding;
@@ -103,14 +105,17 @@ function layout() {
   const contentHeight = topMargin + reelsHeight + spinButtonHeight + winTextHeight;
   const contentWidth = SYMBOL_WIDTH * 5 + SPACING_X * 4;
 
+  // determine the scaling factor to fit content inside the current window
   const scaleX = window.innerWidth / contentWidth;
   const scaleY = window.innerHeight / contentHeight;
   const scale = Math.min(scaleX, scaleY);
 
+  // apply the scale and center the game container
   gameContainer.scale.set(scale);
   gameContainer.x = (window.innerWidth - contentWidth * scale) / 2;
   gameContainer.y = (window.innerHeight - contentHeight * scale) / 2;
 
+  // position each symbol in the 5x3 grid
   const startX = 0;
   const startY = topMargin;
 
@@ -124,11 +129,14 @@ function layout() {
     }
   }
 
+  // place spin button below the reels
   spinButton.x = contentWidth / 2 - spinButton.width / 2;
   spinButton.y = startY + reelsHeight + 20;
 
+  // position win text below spin button
   winText.x = contentWidth / 2;
   winText.y = spinButton.y + spinButton.height + 50;
-
+ 
+  // scale the text to fit nicely
   fitTextToWidth(winText, contentWidth * 0.8);
 }

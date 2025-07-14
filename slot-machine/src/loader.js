@@ -51,7 +51,7 @@ export async function preloadAssets(app, onComplete) {
       loadingText.text = `Loading: ${percent}%`;
     });
 
-    await delay(150);
+    await delay(100);
   }
 
   // Clean up after loading is complete
